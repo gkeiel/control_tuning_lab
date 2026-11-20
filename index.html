@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#101820">
   <meta name="description" content="Control Tuning Lab is a browser-based control systems simulation workspace.">
   <title>Control Tuning Lab</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
   <div class="app-shell">
@@ -16,6 +16,7 @@
       <nav class="workspace-tabs" aria-label="Simulation workspace">
         <button class="workspace-tab active" id="workspace-pid" type="button" aria-selected="true"><span class="tab-mark">01</span><span>PID · Step reference<small>GENERAL PURPOSE CONTROL</small></span></button>
         <button class="workspace-tab" id="workspace-pr" type="button" aria-selected="false"><span class="tab-mark">02</span><span>PR · Sine reference<small>SINUSOIDAL TRACKING</small></span></button>
+        <button class="workspace-tab" id="workspace-prep" type="button" aria-selected="false"><span class="tab-mark">03</span><span>PREP &middot; Sine reference<small>FILTERED REPETITIVE</small></span></button>
       </nav>
       <section class="workspace-grid">
         <section class="panel config-panel" aria-labelledby="config-title">
@@ -32,6 +33,9 @@
           <div class="subsection-heading"><span class="section-index">CONTROLLER</span><span class="subsection-rule"></span><span class="controller-mode" id="controller-mode-label">PID</span></div>
           <div class="parameter-grid controller-fields" id="pid-controller-fields"><div class="field-group"><label for="controller-kp">Proportional <span class="symbol">Kₚ</span></label><input id="controller-kp" type="number" value="2" step="0.1"></div><div class="field-group"><label for="controller-ki">Integral <span class="symbol">Kᵢ</span></label><input id="controller-ki" type="number" value="0.5" step="0.1"></div><div class="field-group"><label for="controller-kd">Derivative <span class="symbol">Kᵈ</span></label><input id="controller-kd" type="number" value="0.2" step="0.1"></div></div>
           <div class="parameter-grid controller-fields hidden" id="pr-controller-fields"><div class="field-group"><label for="pr-kp">Proportional <span class="symbol">Kₚ</span></label><input id="pr-kp" type="number" value="2" step="0.1"></div><div class="field-group"><label for="controller-kr">Resonant gain <span class="symbol">Kᵣ</span></label><input id="controller-kr" type="number" value="1" step="0.1"></div><div class="field-group"><label for="controller-frequency">Resonant frequency <span class="unit">Hz</span></label><input id="controller-frequency" type="number" value="1" min="0.01" step="0.1"></div></div>
+          <div class="parameter-grid controller-fields hidden" id="prep-controller-fields"><div class="field-group"><label for="prep-kp">Proportional <span class="symbol">K<sub>p</sub></span></label><input id="prep-kp" type="number" value="2" step="0.1"></div><div class="field-group"><label for="prep-kr">Repetitive gain <span class="symbol">K<sub>r</sub></span></label><input id="prep-kr" type="number" value="1" step="0.1"></div><div class="field-group"><label for="prep-wc">Cutoff <span class="symbol">&omega;<sub>c</sub> (rad/s)</span></label><input id="prep-wc" type="number" value="20" min="0.01" step="1"></div></div>
+          <div class="equation-card hidden" id="prep-equation"><span class="equation-label">PREP TRANSFER FUNCTION</span><div class="equation">C(s) = K<sub>p</sub> + <span class="fraction"><span>K<sub>r</sub></span><span>1 - Q(s)e<sup>-&tau;s</sup></span></span>, &nbsp; Q(s) = <span class="fraction"><span>&omega;<sub>c</sub></span><span>s + &omega;<sub>c</sub></span></span></div></div>
+          <p class="field-hint hidden" id="prep-hint">The repetitive delay &tau; is one sine period (&tau; = 1/f).</p>
           <p class="field-hint hidden" id="pr-hint">Set the resonant frequency to match the sine reference frequency.</p>
           <div class="subsection-heading reference-heading"><span class="section-index">REFERENCE &amp; TIME</span><span class="subsection-rule"></span></div>
           <div class="parameter-grid reference-fields" id="pid-reference-fields"><div class="field-group"><label for="sim-setpoint">Step amplitude <span class="symbol">r</span></label><input id="sim-setpoint" type="number" value="1" step="0.1"></div><div class="field-group"><label>Reference type</label><div class="fixed-choice">Step reference <span>r(t)</span></div></div></div>
@@ -46,10 +50,10 @@
           <div class="results-footer"><span><i></i> ENGINE <b>RUNNING</b></span><span>RK4 INTEGRATION <b id="simulation-step-status">Δt = 0.01 s</b></span></div>
         </section>
       </section>
-      <footer class="page-footer"><span>CONTROLLER TUNING LAB <b>·</b> LEARN BY SIMULATING</span><span>PID STEP LAB / PR SINE LAB</span></footer>
+      <footer class="page-footer"><span>CONTROLLER TUNING LAB <b>·</b> LEARN BY SIMULATING</span><span>PID STEP LAB / PR + PREP SINE LAB</span></footer>
     </main>
   </div>
   <script src="js/file-protocol-check.js"></script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/app.js?v=2"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 # Control Tuning Lab
 
-Control Tuning Lab is a browser-based control systems simulator built with plain HTML, CSS, and JavaScript modules.
-
+Control Tuning Lab is a browser-based control systems simulator built with plain HTML, CSS, and JavaScript modules.  
+▶️ [LAUNCH SIMULATOR](https://gkeiel.github.io/control_tuning_lab/)  
 
 ## Features
 

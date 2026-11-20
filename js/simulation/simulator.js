@@ -3,8 +3,9 @@ import { createReference } from "./references.js";
 import { createDisturbance } from "./disturbances.js";
 import { createPidController } from "../controllers/pid.js";
 import { createPrController } from "../controllers/pr.js";
+import { createPrepController } from "../controllers/prep.js";
 
-const CONTROLLER_FACTORIES = { PID: createPidController, PR: createPrController };
+const CONTROLLER_FACTORIES = { PID: createPidController, PR: createPrController, PREP: createPrepController };
 const addScaled = (base, increment, scale) => Object.fromEntries(Object.keys(base).map((key) => [key, base[key] + increment[key] * scale]));
 function validate(config) {
   if (!(config.duration > 0) || !(config.stepSize > 0)) throw new Error("Duration and time step must be greater than zero.");
