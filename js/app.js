@@ -34,7 +34,7 @@ function readConfig(workspace = activeWorkspace) {
   const controller = workspace === "pid"
     ? { type: "PID", kp: number("controller-kp", "Proportional gain"), ki: number("controller-ki", "Integral gain"), kd: number("controller-kd", "Derivative gain") }
     : workspace === "pr" ? { type: "PR", kp: number("pr-kp", "Proportional gain"), kr: number("controller-kr", "Resonant gain"), resonantFrequency: number("controller-frequency", "Resonant frequency") }
-      : { type: "PREP", kp: number("prep-kp", "Proportional gain"), kr: number("prep-kr", "Repetitive gain"), cutoffFrequency: number("prep-wc", "Cutoff frequency"), resonantFrequency: number("sine-frequency", "Sine frequency") };
+      : { type: "PREP", kp: number("prep-kp", "Proportional gain"), kr: number("prep-kr", "Repetitive gain"), cutoffFrequency: number("prep-wc", "Cutoff frequency"), delayTime: number("prep-tau", "PREP delay"), resonantFrequency: number("sine-frequency", "Sine frequency") };
   const reference = workspace === "pid"
     ? { type: "step", amplitude: number("sim-setpoint", "Step amplitude") }
     : { type: "sine", amplitude: number("sine-amplitude", "Sine amplitude"), frequency: number("sine-frequency", "Sine frequency"), offset: 0 };
@@ -50,6 +50,7 @@ function render(result = sessions[activeWorkspace]?.snapshot()) {
   ]);
   drawChart(elements.controlCanvas, [{ time: result.time, values: result.control, color: chartColors.control, width: 1.8 }]);
   const activeSession = sessions[activeWorkspace];
+  byId("simulation-engine-status").textContent = "RUNNING";
   elements.clock.textContent = `LIVE · ${activeSession.elapsed.toFixed(2)} s`;
   byId("simulation-step-status").textContent = `Δt = ${activeSession.stepSize} s`;
 }
@@ -66,11 +67,13 @@ function switchWorkspace(workspace) {
   for (const key of ["pid", "pr", "prep"]) tabs[key].setAttribute("aria-selected", String(workspace === key));
   tabs.pid.setAttribute("aria-selected", String(workspace === "pid"));
   tabs.pr.setAttribute("aria-selected", String(workspace === "pr"));
-  byId("active-workspace-label").textContent = workspace === "pid" ? "PID · Step" : "PR · Sine";
+  byId("active-workspace-label").textContent = workspace === "pid" ? "PID · Step" : workspace === "pr" ? "PR · Sine" : "PREP · Sine";
   byId("controller-mode-label").textContent = workspace.toUpperCase();
   byId("pid-controller-fields").classList.toggle("hidden", workspace !== "pid");
   byId("pr-controller-fields").classList.toggle("hidden", workspace !== "pr");
   byId("prep-controller-fields").classList.toggle("hidden", workspace !== "prep");
+  byId("pid-equation").classList.toggle("hidden", workspace !== "pid");
+  byId("pr-equation").classList.toggle("hidden", workspace !== "pr");
   byId("prep-equation").classList.toggle("hidden", workspace !== "prep");
   byId("pid-reference-fields").classList.toggle("hidden", workspace !== "pid");
   byId("pr-reference-fields").classList.toggle("hidden", workspace === "pid");
@@ -123,7 +126,7 @@ tabs.pr.addEventListener("click", () => switchWorkspace("pr"));
 tabs.prep.addEventListener("click", () => switchWorkspace("prep"));
 elements.plantType.addEventListener("change", () => { updatePlantFields(); restartPlantSessions(); });
 for (const id of ["plant-gain", "plant-tau", "plant-zeta", "plant-wn"]) byId(id).addEventListener("change", restartPlantSessions);
-for (const id of ["controller-kp", "controller-ki", "controller-kd", "pr-kp", "controller-kr", "controller-frequency", "prep-kp", "prep-kr", "prep-wc"]) byId(id).addEventListener("input", updateActiveController);
+for (const id of ["controller-kp", "controller-ki", "controller-kd", "pr-kp", "controller-kr", "controller-frequency", "prep-kp", "prep-kr", "prep-wc", "prep-tau"]) byId(id).addEventListener("input", updateActiveController);
 for (const id of ["sim-setpoint", "sine-amplitude"]) byId(id).addEventListener("input", updateActiveReference);
 byId("sine-frequency").addEventListener("input", () => { updateActiveReference(); updateActiveController(); });
 byId("sim-duration").addEventListener("change", () => updateTimeSetting("window"));

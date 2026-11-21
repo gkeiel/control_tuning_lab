@@ -1,10 +1,11 @@
-﻿import test from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { createPlant } from "../js/simulation/plants.js";
 import { createReference } from "../js/simulation/references.js";
 import { createDisturbance } from "../js/simulation/disturbances.js";
 import { createPidController } from "../js/controllers/pid.js";
 import { createPrController } from "../js/controllers/pr.js";
+import { createPrepController } from "../js/controllers/prep.js";
 import { simulate, createSimulationSession } from "../js/simulation/simulator.js";
 const closeTo = (a, b, e = 1e-8) => assert.ok(Math.abs(a - b) <= e, `${a} differs from ${b}`);
 test("first- and second-order plant derivatives and invalid parameters", () => {
@@ -32,6 +33,22 @@ test("PID supports P, PI, and PD terms by setting unused gains to zero", () => {
 test("PR controller response and resonant-frequency validation", () => {
   const pr = createPrController({ kp: 2, kr: 1, resonantFrequency: 1 }); closeTo(pr.calculate(3, 0.001), 6.003, 1e-5);
   assert.throws(() => createPrController({ kp: 1, kr: 1, resonantFrequency: 0 }), /frequency/);
+});
+test("PREP delay is independent, configurable, and validated", () => {
+  const config = { kp: 0, kr: 1, cutoffFrequency: 1000, resonantFrequency: 1, delayTime: 0.02 };
+  const shortDelay = createPrepController(config);
+  const longDelay = createPrepController({ ...config, delayTime: 0.04 });
+  const shortOutput = Array.from({ length: 3 }, () => shortDelay.calculate(1, 0.01));
+  const longOutput = Array.from({ length: 5 }, () => longDelay.calculate(1, 0.01));
+  assert.equal(shortOutput[0], 1);
+  assert.equal(shortOutput[1], 1);
+  assert.ok(shortOutput[2] > 1);
+  assert.ok(longOutput.slice(0, 4).every((value) => value === 1));
+  assert.ok(longOutput[4] > 1);
+  shortDelay.update({ ...config, delayTime: 0.04 });
+  assert.equal(shortDelay.calculate(1, 0.01), 1);
+  assert.throws(() => shortDelay.update({ ...config, delayTime: 0 }), /PREP delay/);
+  assert.throws(() => createPrepController({ ...config, delayTime: 0 }), /PREP delay/);
 });
 test("disturbance source supports disabled, step, and sinusoidal input", () => {
   assert.equal(createDisturbance({ enabled: false, type: "sine", frequency: 0 })(1), 0);

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#101820">
   <meta name="description" content="Control Tuning Lab is a browser-based control systems simulation workspace.">
   <title>Control Tuning Lab</title>
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
   <div class="app-shell">
@@ -16,44 +16,51 @@
       <nav class="workspace-tabs" aria-label="Simulation workspace">
         <button class="workspace-tab active" id="workspace-pid" type="button" aria-selected="true"><span class="tab-mark">01</span><span>PID · Step reference<small>GENERAL PURPOSE CONTROL</small></span></button>
         <button class="workspace-tab" id="workspace-pr" type="button" aria-selected="false"><span class="tab-mark">02</span><span>PR · Sine reference<small>SINUSOIDAL TRACKING</small></span></button>
-        <button class="workspace-tab" id="workspace-prep" type="button" aria-selected="false"><span class="tab-mark">03</span><span>PREP &middot; Sine reference<small>FILTERED REPETITIVE</small></span></button>
+        <button class="workspace-tab" id="workspace-prep" type="button" aria-selected="false"><span class="tab-mark">03</span><span>PREP &middot; Sine reference<small>SINUSOIDAL TRACKING</small></span></button>
       </nav>
       <section class="workspace-grid">
         <section class="panel config-panel" aria-labelledby="config-title">
-          <div class="panel-heading"><div><span class="section-index">CONFIGURATION</span><h2 id="config-title">System setup</h2></div><span class="panel-glyph">⌘</span></div>
-          <div class="field-group"><label for="plant-type">Plant model</label><select id="plant-type"><option value="firstOrder">First order</option><option value="secondOrder">Second order</option></select></div>
+          <div class="panel-heading"><div><h2 id="config-title">System setup</h2></div></div>
+          <div class="subsection-heading plant-heading"><span class="section-index">PLANT</span><span class="subsection-rule"></span></div>
+
+          <div class="subsection-heading plant-heading"><span class="section-index"></span></div>
+          <div><select id="plant-type"><option value="firstOrder">First order</option><option value="secondOrder">Second order</option></select></div>
           <div class="equation-card"><span class="equation-label">PLANT TRANSFER FUNCTION</span><div id="plant-equation" class="equation">G(s) = <span class="fraction"><span>K</span><span>τs + 1</span></span></div></div>
           <div class="parameter-grid plant-parameters"><div class="field-group"><label for="plant-gain">Gain <span class="symbol">K</span></label><input id="plant-gain" type="number" value="1" step="0.1"></div><div class="field-group" id="time-constant-field"><label for="plant-tau">Time constant <span class="symbol">τ</span></label><input id="plant-tau" type="number" value="1" min="0.01" step="0.1"></div><div class="field-group hidden" id="damping-field"><label for="plant-zeta">Damping ratio <span class="symbol">ζ</span></label><input id="plant-zeta" type="number" value="0.7" min="0.01" step="0.05"></div><div class="field-group hidden" id="natural-frequency-field"><label for="plant-wn">Natural frequency <span class="symbol">ωₙ</span></label><input id="plant-wn" type="number" value="2" min="0.01" step="0.1"></div></div>
+
           <div class="subsection-heading disturbance-heading"><span class="section-index">PLANT DISTURBANCE</span><span class="subsection-rule"></span></div>
           <label class="check-row"><input id="disturbance-enabled" type="checkbox"><span>Add disturbance</span></label>
           <div class="disturbance-fields hidden" id="disturbance-fields">
             <div class="field-group"><label for="disturbance-type">Signal</label><select id="disturbance-type"><option value="step">Step</option><option value="sine">Sine wave</option></select></div>
             <div class="parameter-grid"><div class="field-group"><label for="disturbance-amplitude">Amplitude <span class="symbol">d</span></label><input id="disturbance-amplitude" type="number" value="0.5" step="0.1"></div><div class="field-group"><label for="disturbance-start">Start time <span class="unit">s</span></label><input id="disturbance-start" type="number" value="1" min="0" step="0.1"></div><div class="field-group hidden" id="disturbance-frequency-field"><label for="disturbance-frequency">Frequency <span class="unit">Hz</span></label><input id="disturbance-frequency" type="number" value="1" min="0.01" step="0.1"></div></div>
           </div>
+
           <div class="subsection-heading"><span class="section-index">CONTROLLER</span><span class="subsection-rule"></span><span class="controller-mode" id="controller-mode-label">PID</span></div>
-          <div class="parameter-grid controller-fields" id="pid-controller-fields"><div class="field-group"><label for="controller-kp">Proportional <span class="symbol">Kₚ</span></label><input id="controller-kp" type="number" value="2" step="0.1"></div><div class="field-group"><label for="controller-ki">Integral <span class="symbol">Kᵢ</span></label><input id="controller-ki" type="number" value="0.5" step="0.1"></div><div class="field-group"><label for="controller-kd">Derivative <span class="symbol">Kᵈ</span></label><input id="controller-kd" type="number" value="0.2" step="0.1"></div></div>
-          <div class="parameter-grid controller-fields hidden" id="pr-controller-fields"><div class="field-group"><label for="pr-kp">Proportional <span class="symbol">Kₚ</span></label><input id="pr-kp" type="number" value="2" step="0.1"></div><div class="field-group"><label for="controller-kr">Resonant gain <span class="symbol">Kᵣ</span></label><input id="controller-kr" type="number" value="1" step="0.1"></div><div class="field-group"><label for="controller-frequency">Resonant frequency <span class="unit">Hz</span></label><input id="controller-frequency" type="number" value="1" min="0.01" step="0.1"></div></div>
-          <div class="parameter-grid controller-fields hidden" id="prep-controller-fields"><div class="field-group"><label for="prep-kp">Proportional <span class="symbol">K<sub>p</sub></span></label><input id="prep-kp" type="number" value="2" step="0.1"></div><div class="field-group"><label for="prep-kr">Repetitive gain <span class="symbol">K<sub>r</sub></span></label><input id="prep-kr" type="number" value="1" step="0.1"></div><div class="field-group"><label for="prep-wc">Cutoff <span class="symbol">&omega;<sub>c</sub> (rad/s)</span></label><input id="prep-wc" type="number" value="20" min="0.01" step="1"></div></div>
-          <div class="equation-card hidden" id="prep-equation"><span class="equation-label">PREP TRANSFER FUNCTION</span><div class="equation">C(s) = K<sub>p</sub> + <span class="fraction"><span>K<sub>r</sub></span><span>1 - Q(s)e<sup>-&tau;s</sup></span></span>, &nbsp; Q(s) = <span class="fraction"><span>&omega;<sub>c</sub></span><span>s + &omega;<sub>c</sub></span></span></div></div>
-          <p class="field-hint hidden" id="prep-hint">The repetitive delay &tau; is one sine period (&tau; = 1/f).</p>
+          <div class="parameter-grid controller-fields" id="pid-controller-fields"><div class="field-group"><label for="controller-kp">Proportional <span class="symbol">Kₚ</span></label><input id="controller-kp" type="number" value="10" step="0.1"></div><div class="field-group"><label for="controller-ki">Integral <span class="symbol">Kᵢ</span></label><input id="controller-ki" type="number" value="5" step="0.1"></div><div class="field-group"><label for="controller-kd">Derivative <span class="symbol">Kᵈ</span></label><input id="controller-kd" type="number" value="0.2" step="0.1"></div></div>
+          <div class="equation-card controller-equation hidden" id="pid-equation"><span class="equation-label">PID TRANSFER FUNCTION</span><div class="equation">C(s) = K<sub>p</sub> + <span class="fraction"><span>K<sub>i</sub></span><span>s</span></span> + K<sub>d</sub>s</div></div>
+          <div class="parameter-grid controller-fields hidden" id="pr-controller-fields"><div class="field-group"><label for="pr-kp">Proportional <span class="symbol">Kₚ</span></label><input id="pr-kp" type="number" value="10" step="0.1"></div><div class="field-group"><label for="controller-kr">Resonant gain <span class="symbol">Kᵣ</span></label><input id="controller-kr" type="number" value="5" step="0.1"></div><div class="field-group"><label for="controller-frequency">Resonant frequency <span class="unit">Hz</span></label><input id="controller-frequency" type="number" value="1" min="0.01" step="0.1"></div></div>
+          <div class="equation-card controller-equation hidden" id="pr-equation"><span class="equation-label">PR TRANSFER FUNCTION</span><div class="equation">C(s) = K<sub>p</sub> + <span class="fraction"><span>K<sub>r</sub>s</span><span>s<sup>2</sup> + &omega;<sub>r</sub><sup>2</sup></span></span></div></div>
+          <div class="parameter-grid controller-fields hidden" id="prep-controller-fields"><div class="field-group"><label for="prep-kp">Proportional <span class="symbol">K<sub>p</sub></span></label><input id="prep-kp" type="number" value="10" step="0.1"></div><div class="field-group"><label for="prep-kr">Repetitive gain <span class="symbol">K<sub>r</sub></span></label><input id="prep-kr" type="number" value="5" step="0.1"></div><div class="field-group"><label for="prep-wc">Cutoff <span class="symbol">&omega;<sub>c</sub> (rad/s)</span></label><input id="prep-wc" type="number" value="1000" min="0.01" step="1"></div><div class="field-group"><label for="prep-tau">Repetitive delay <span class="symbol">&tau; (s)</span></label><input id="prep-tau" type="number" value="1" min="0.001" step="0.1"></div></div>
+          <div class="equation-card controller-equation hidden" id="prep-equation"><span class="equation-label">PREP TRANSFER FUNCTION</span><div class="equation">C(s) = K<sub>p</sub> + <span class="fraction"><span>K<sub>r</sub></span><span>1 - Q(s)e<sup>-&tau;s</sup></span></span>, &nbsp; Q(s) = <span class="fraction"><span>&omega;<sub>c</sub></span><span>s + &omega;<sub>c</sub></span></span></div></div>
+          <p class="field-hint hidden" id="prep-hint">The PREP delay &tau; is independent of the plant time constant.</p>
           <p class="field-hint hidden" id="pr-hint">Set the resonant frequency to match the sine reference frequency.</p>
           <div class="subsection-heading reference-heading"><span class="section-index">REFERENCE &amp; TIME</span><span class="subsection-rule"></span></div>
           <div class="parameter-grid reference-fields" id="pid-reference-fields"><div class="field-group"><label for="sim-setpoint">Step amplitude <span class="symbol">r</span></label><input id="sim-setpoint" type="number" value="1" step="0.1"></div><div class="field-group"><label>Reference type</label><div class="fixed-choice">Step reference <span>r(t)</span></div></div></div>
           <div class="parameter-grid reference-fields hidden" id="pr-reference-fields"><div class="field-group"><label for="sine-amplitude">Sine amplitude <span class="symbol">A</span></label><input id="sine-amplitude" type="number" value="1" step="0.1"></div><div class="field-group"><label for="sine-frequency">Sine frequency <span class="unit">Hz</span></label><input id="sine-frequency" type="number" value="1" min="0.01" step="0.1"></div></div>
           <div class="parameter-grid time-fields"><div class="field-group"><label for="sim-duration">Chart window <span class="unit">s</span></label><input id="sim-duration" type="number" value="10" min="0.1" step="1"></div><div class="field-group"><label for="integration-step">Integration step <span class="unit">s</span></label><input id="integration-step" type="number" value="0.01" min="0.0001" step="0.001"></div></div>
-          <button class="run-button" id="run-simulation" type="button"><span class="play-icon">↺</span> Restart active simulation <span class="button-arrow">LIVE</span></button>
+          <button class="run-button" id="run-simulation" type="button"><span class="play-icon">↺</span> Restart simulation <span class="button-arrow">LIVE</span></button>
           <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
         </section>
         <section class="results-grid" aria-label="Live simulation results">
           <section class="panel chart-panel"><div class="panel-heading chart-heading"><div><h2>Closed-loop response</h2></div><span class="chart-unit"></span></div><div class="chart-wrap"><canvas id="output-chart" aria-label="Plot of reference, system output, and tracking error over time"></canvas></div><div class="chart-legend"><span><i class="legend-reference"></i> Reference <b>r(t)</b></span><span><i class="legend-output"></i> Output <b>y(t)</b></span><span><i class="legend-error"></i> Error <b>e(t)</b></span></div></section>
           <section class="panel control-panel"><div class="panel-heading chart-heading"><div><h2>Control signal</h2></div><span class="chart-unit"></span></div><div class="chart-wrap"><canvas id="control-chart" aria-label="Plot of controller signal over time"></canvas></div><div class="chart-legend"><span><i class="legend-reference"></i> Control signal <b>u(t)</b></span></div></section>
-          <div class="results-footer"><span><i></i> ENGINE <b>RUNNING</b></span><span>RK4 INTEGRATION <b id="simulation-step-status">Δt = 0.01 s</b></span></div>
+          <div class="results-footer"><span><i></i> ENGINE <b id="simulation-engine-status">WAITING</b></span><span>RK4 INTEGRATION <b id="simulation-step-status">Δt = 0.01 s</b></span></div>
         </section>
       </section>
       <footer class="page-footer"><span>CONTROLLER TUNING LAB <b>·</b> LEARN BY SIMULATING</span><span>PID STEP LAB / PR + PREP SINE LAB</span></footer>
     </main>
   </div>
   <script src="js/file-protocol-check.js"></script>
-  <script type="module" src="js/app.js?v=2"></script>
+  <script type="module" src="js/app.js?v=4"></script>
 </body>
 </html>

@@ -4,14 +4,14 @@ export function createPrController(config) {
   function update(next) {
     Object.assign(config, next);
     if (!(config.resonantFrequency > 0)) throw new Error("The PR resonant frequency must be greater than zero.");
-    omegaSquared = (2 * Math.PI * config.resonantFrequency) ** 2;
+    omegaSquared = (2*Math.PI*config.resonantFrequency)**2;
   }
   update(config);
   return {
     update,
     calculate(error, dt) {
       // RK4 integration of x1'=x2, x2'=e-ω0²x1 for the resonant transfer term.
-      const acceleration = (x) => error - omegaSquared * x;
+      const acceleration = (x) => error -omegaSquared*x;
       const k1x = velocity, k1v = acceleration(position);
       const k2x = velocity + dt * k1v / 2, k2v = acceleration(position + dt * k1x / 2);
       const k3x = velocity + dt * k2v / 2, k3v = acceleration(position + dt * k2x / 2);
